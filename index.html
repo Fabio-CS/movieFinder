@@ -7,29 +7,60 @@
          === Movie Finder ===
         </title>
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
+        <script src="js/ui-bootstrap-custom-tpls-0.13.0.js"></script>
         <script src="js/movieFinder.js"></script>
         <script src="js/movieFinderCtrl.js"></script>
     </head>
-    <body ng-app="movieFinder" ng-controller="movieFinderCtrl">
+    <body data-ng-app="movieFinder" data-ng-controller="movieFinderCtrl">
         <div class="container-fluid">
             <div class="row">
-                <label class="col-sm-12">Movie Finder</label>
-                <form class="form-horizontal">
-                    <input type="search" ng-model="query" placeholder="Search a movie by the name">
-                    <button class="btn" ng-click="search()">
-                    Search
-                    </button>
-                </form>
+                <div class="col-sm-12">
+                    <label>Movie Finder</label>
+                    <form class="form-horizontal">
+                        <input type="search" data-ng-model="query" placeholder="Search a movie by the name">
+                        <button class="btn" data-ng-click="search()">
+                        <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </form>
+                </div>
             </div>
             <hr>
-            <div class="row">
-                <h1>Results</h1>
-                <ul>
-                    <li ng-repeat="info in results track by $index">
-                      {{ info }}
-                    </li>
-                </ul>
+            <div class="row" data-ng-hide="zeroState">
+                <h1>Results <small>{{ totalItems }} itens found!</small></h1>
+                <div data-ng-class="colClass" data-ng-show="hasMovies">
+                    <h2>Movies</h2>
+                    <ul>
+                        <li data-ng-repeat="movie in movies track by $index | orderBy:'title' ">
+                          {{ movie.title }}
+                        </li>
+                    </ul>
+                </div>
+                <div data-ng-class="colClass" data-ng-show="hasActors">
+                    <h2>Persons</h2>
+                    <ul>
+                        <li data-ng-repeat="actor in actors track by $index | orderBy:'name' ">
+                          {{ actor.name }}
+                        </li>
+                    </ul>
+                </div>
+                <div data-ng-class="colClass" data-ng-show="hasTV">
+                    <h2>TV</h2>
+                    <ul>
+                        <li data-ng-repeat="show in tv track by $index | orderBy:'name' ">
+                          {{ show.name }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-12" data-ng-hide="hasActors || hasMovies || hasTV">
+                        <h2>No matches found!</h2>
+                </div>
+            </div>
+            <div class="row" data-ng-show="hasPagination">
+                    <div class="col-sm-12">
+                        <pagination total-items="totalItems" max-size="maxSize" ng-model="currentPage" ng-change="pageChanged()"></pagination>
+                    </div>
             </div>
         </div>
     </body>

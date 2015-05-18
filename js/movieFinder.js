@@ -1,1 +1,1 @@
-var movieFinder = angular.module('movieFinder', []);
+var movieFinder = angular.module('movieFinder', ['ui.bootstrap']);
