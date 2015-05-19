@@ -76,7 +76,29 @@ h1, h2, h3, h4, h5, h6 {
     color: #2c3e50;
 }
 
+#results, #pagination{
+    padding-left: 40px;
+}
+
+#results h2{
+    width: 220px;
+}
+
 #results ul li{
     display: inline-block;
     list-style: none;
+    width: 220px;
+    float: left;
+}
+
+#results #person ul li{
+    min-height: 410px;
+}
+
+#results #movies ul li, #results #tv ul li{
+    min-height: 335px
+}
+
+#results h5, #results h4, #results h6 {
+    max-width: 215px;
 }

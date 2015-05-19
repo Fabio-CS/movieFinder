@@ -20,9 +20,9 @@
                 <div class="col-sm-12" id="header">
                     <div>
                         <h1><label for="search">Movie Finder</label></h1>
-                        <form class="form-horizontal">
+                        <form class="form-horizontal" data-ng-submit="search();initSearch()">
                             <input id="search" type="search" data-ng-model="query" placeholder="Search a movie, person or TV show">
-                            <button class="btn" data-ng-click="search()">
+                            <button class="btn" data-ng-click="search();initSearch()">
                                 <span class="glyphicon glyphicon-search"></span>
                             </button>
                         </form>
@@ -33,36 +33,35 @@
             <hr>
             <div class="row" data-ng-hide="zeroState" id="results">
                 <h1>Results <small>{{ totalItems }} itens found!</small></h1>
-                <div data-ng-class="colClass" data-ng-show="hasMovies">
-                    <h2>Movies</h2>
+                <div data-ng-class="colClass" data-ng-show="hasMovies" id="movies">
                     <ul>
+                        <h2>Movies</h2>
                         <li data-ng-repeat="movie in movies track by $index | orderBy:'title' ">
-                          <img src="http://image.tmdb.org/t/p/w185/{{ movie.poster_path }}">
-                                <h5>{{ movie.title }} - {{movie.release_date | date: 'yyyy'}}</h5>
-                                <h6><a href="#" data-ng-click="movieDetails(movie.id)">Details</a></h6>
+                          <img src="{{ movie.poster_path }}" width="185" height="260">
+                            <h5><a href="#" data-ng-click="movieDetails(movie.id)">{{ movie.title }} {{movie.release_date | date: '- yyyy'}}</a></h5>
                         </li>
                     </ul>
                 </div>
-                <div data-ng-class="colClass" data-ng-show="hasActors">
-                    <h2>Persons</h2>
+                <div data-ng-class="colClass" data-ng-show="hasActors" id="person">
                     <ul>
+                        <h2 class="clear:both">Persons</h2>
                         <li data-ng-repeat="actor in actors track by $index | orderBy:'name' ">
-                          <img src="http://image.tmdb.org/t/p/w185/{{ actor.profile_path }}">
-                            <h5>{{actor.name}}</h5>
-                            <h4>Known for:</h4>
+                          <img src="{{ actor.profile_path }}" width="185" height="260">
+                            <h4><a href="#" data-ng-click="personDetail(actor.id)">{{actor.name}}</a></h4>
+                            <h5 data-ng-if="actor.known_for != null">Known for:</h5>
                             <h6 data-ng-repeat="mv in actor.known_for">
-                                <a href="#" data-ng-click="personDetails(mv.id)">{{ mv.title }}</a>
+                                <a data-ng-if="mv.title != null" href="#" data-ng-click="movieDetails(mv.id)">{{ mv.title }}</a>
+                                <a data-ng-if="mv.name != null" href="#" data-ng-click="tvDetails(mv.id)">{{ mv.name }}</a>
                             </h6>
                         </li>
                     </ul>
                 </div>
-                <div data-ng-class="colClass" data-ng-show="hasTV">
-                    <h2>TV</h2>
+                <div data-ng-class="colClass" data-ng-show="hasTV" id="tv">
                     <ul>
+                        <h2 class="clear:both">TV</h2>
                         <li data-ng-repeat="show in tv track by $index | orderBy:'name' ">
-                          <img src="http://image.tmdb.org/t/p/w185/{{ show.poster_path }}">
-                                <h5>{{ show.title }} - {{show.release_date | date: 'yyyy'}}</h5>
-                                <h6><a href="#" data-ng-click="showDetails(show.id)">Details</a></h6>
+                          <img src="{{ show.poster_path }}" width="185" height="260">
+                            <h5><a href="#" data-ng-click="showDetails(show.id)">{{ show.name }} {{show.first_air_date | date: '- yyyy'}}</a></h5>
                         </li>
                     </ul>
                 </div>
@@ -70,9 +69,9 @@
                         <h2>No matches found!</h2>
                 </div>
             </div>
-            <div class="row" data-ng-show="hasPagination">
+            <div class="row" data-ng-show="hasPagination" id="pagination">
                     <div class="col-sm-12">
-                        <pagination total-items="totalItems" max-size="maxSize" ng-model="currentPage" ng-change="pageChanged()"></pagination>
+                        <pagination total-items="totalItems" max-size="maxSize" ng-model="currentPage" ng-change="search()"></pagination>
                     </div>
             </div>
         </div>
