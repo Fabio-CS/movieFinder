@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
+    <head profile="http://www.w3.org/2005/10/profile">
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>
-         === Movie Finder ===
+         ==== Movie Finder ====
         </title>
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/styles.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
         <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
         <script src="js/ui-bootstrap-custom-tpls-0.13.0.js"></script>
         <script src="js/movieFinder.js"></script>
@@ -31,37 +32,43 @@
                 </div>
             </div>
             <hr>
-            <div class="row" data-ng-hide="zeroState" id="results">
+            <div class="row" data-ng-show="hasResults" id="results">
                 <h1>Results <small>{{ totalItems }} itens found!</small></h1>
                 <div data-ng-class="colClass" data-ng-show="hasMovies" id="movies">
                     <ul>
                         <h2>Movies</h2>
                         <li data-ng-repeat="movie in movies track by $index | orderBy:'title' ">
-                          <img src="{{ movie.poster_path }}" width="185" height="260">
-                            <h5><a href="#" data-ng-click="movieDetails(movie.id)">{{ movie.title }} {{movie.release_date | date: '- yyyy'}}</a></h5>
+                            <a href="#" data-ng-click="getInfoDetails(movie.media_type, movie.id)">
+                                <img src="{{ movie.poster_path }}" width="185" height="260">
+                            </a>
+                            <h5><a href="#" data-ng-click="getInfoDetails(movie.media_type, movie.id)">{{ movie.title }} {{movie.release_date | date: '- yyyy'}}</a></h5>
                         </li>
                     </ul>
                 </div>
                 <div data-ng-class="colClass" data-ng-show="hasActors" id="person">
                     <ul>
-                        <h2 class="clear:both">Persons</h2>
+                        <h2>People</h2>
                         <li data-ng-repeat="actor in actors track by $index | orderBy:'name' ">
-                          <img src="{{ actor.profile_path }}" width="185" height="260">
-                            <h4><a href="#" data-ng-click="personDetail(actor.id)">{{actor.name}}</a></h4>
+                            <a href="#" data-ng-click="getInfoDetails(actor.media_type, actor.id)">
+                              <img src="{{ actor.profile_path }}" width="185" height="260">
+                            </a>
+                            <h4><a href="#" data-ng-click="getInfoDetails(actor.media_type, actor.id)">{{actor.name}}</a></h4>
                             <h5 data-ng-if="actor.known_for != null">Known for:</h5>
                             <h6 data-ng-repeat="mv in actor.known_for">
-                                <a data-ng-if="mv.title != null" href="#" data-ng-click="movieDetails(mv.id)">{{ mv.title }}</a>
-                                <a data-ng-if="mv.name != null" href="#" data-ng-click="tvDetails(mv.id)">{{ mv.name }}</a>
+                            <a data-ng-if="mv.media_type == 'movie'" href="#" data-ng-click="getInfoDetails(mv.media_type, mv.id)">{{ mv.title }}</a>
+                            <a data-ng-if="mv.media_type == 'tv'" href="#" data-ng-click="getInfoDetails(mv.media_type, mv.id)">{{ mv.name }}</a>
                             </h6>
                         </li>
                     </ul>
                 </div>
                 <div data-ng-class="colClass" data-ng-show="hasTV" id="tv">
                     <ul>
-                        <h2 class="clear:both">TV</h2>
+                        <h2>TV</h2>
                         <li data-ng-repeat="show in tv track by $index | orderBy:'name' ">
-                          <img src="{{ show.poster_path }}" width="185" height="260">
-                            <h5><a href="#" data-ng-click="showDetails(show.id)">{{ show.name }} {{show.first_air_date | date: '- yyyy'}}</a></h5>
+                            <a href="#" data-ng-click="getInfoDetails(show.media_type, show.id)">
+                              <img src="{{ show.poster_path }}" width="185" height="260">
+                            </a>
+                            <h5><a href="#" data-ng-click="getInfoDetails(show.media_type, show.id)">{{ show.name }} {{show.first_air_date | date: '- yyyy'}}</a></h5>
                         </li>
                     </ul>
                 </div>
@@ -73,6 +80,48 @@
                     <div class="col-sm-12">
                         <pagination total-items="totalItems" max-size="maxSize" ng-model="currentPage" ng-change="search()"></pagination>
                     </div>
+            </div>
+            <div class="row" data-ng-show="hasDetails" id="detail">
+                <div class="col-sm-12">
+                    <div id="divContainer">
+                        <h1>{{infoDetail.media_type}} Information</h1>
+                            <div data-ng-if="infoDetail.media_type != 'person'" id="mvTvDetail">
+                                <img src="{{infoDetail.image}}" width="245" height="345">
+                                <h2>{{infoDetail.title}} {{infoDetail.name}} {{infoDetail.first_air_date | date: '- yyyy'}} {{infoDetail.release_date | date: '- yyyy'}}</h2>
+                                <h3>
+                                    <span data-ng-if="infoDetail.runtime != null && infoDetail.runtime > 0">{{infoDetail.runtime}} min. -  </span>
+                                    <span data-ng-if="infoDetail.genres.length > 0" data-ng-repeat="genre in infoDetail.genres"> <span data-ng-if="!$first" >/</span> {{genre.name}} </span>
+                                </h3>
+                                <div data-ng-if="infoDetail.overview != null" id="overview">
+                                    <h3>Overview</h3>
+                                    <p>
+                                    {{infoDetail.overview}}
+                                    </p>
+                                </div>
+                            </div>
+                            <div data-ng-if="infoDetail.media_type == 'person'" id="personDetail">
+                                <img src="{{infoDetail.image}}" width="245" height="345">
+                                <h2>{{infoDetail.name}}</h2>
+                                <h3>{{infoDetail.birthday | date: '☆ MM/dd/yyyy'}} <span data-ng-if="infoDetail.deathday != null">{{infoDetail.deathday | date: '- ✞ MM/dd/yyyy'}} </span></h3>
+                                <h3 data-ng-if="infoDetail.place_of_birth">
+                                    Place of Birth: {{infoDetail.place_of_birth}}
+                                </h3>
+                                <h4 data-ng-if="actor.known_for != null">Known for:</h4>
+                            <h5 data-ng-repeat="mv in actor.known_for">
+                                <a data-ng-if="mv.media_type == 'movie'" href="#" data-ng-click="getInfoDetails(mv.media_type, mv.id)">{{ mv.title }}</a>
+                                <a data-ng-if="mv.media_type == 'tv'" href="#" data-ng-click="getInfoDetails(mv.media_type, mv.id)">{{ mv.name }}</a>
+                            </h5>
+                                <div data-ng-if="infoDetail.biography != null" id="biography">
+                                    <h3>Biography</h3>
+                                    <p>
+                                    {{infoDetail.biography}}
+                                    </p>
+                                </div>
+                            </div>
+                            <br style="clear:both">
+                            <button class="btn" data-ng-click="search()"> <span class="glyphicon glyphicon-chevron-left"></span> Back</button>
+                    </div>
+                </div>
             </div>
         </div>
     </body>

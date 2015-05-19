@@ -1,23 +1,6 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu);
 @import url(http://fonts.googleapis.com/css?family=Lato:300);
 
-/*
-Red
-#c0392b
-
-Green
-#2ecc71
-
-Golden
-#f1c40f
-
-White
-#ecf0f1
-
-Black
-#2c3e50
-*/
-
 body {
     font-family: 'Ubuntu', sans-serif;
     background-color: #ecf0f1;
@@ -101,4 +84,21 @@ h1, h2, h3, h4, h5, h6 {
 
 #results h5, #results h4, #results h6 {
     max-width: 215px;
+}
+
+#detail h1{
+    text-transform: capitalize;
+}
+
+#detail #divContainer {
+    width: 90%;
+    margin: 20px auto;
+}
+
+#detail img{
+    float: left;
+    margin-left: 0;
+    margin-top: 0;
+    margin-bottom: 30px;
+    margin-right: 50px;
 }
