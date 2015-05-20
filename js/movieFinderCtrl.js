@@ -20,6 +20,7 @@ movieFinder.controller('movieFinderCtrl', function($scope, $http, $log) {
         $scope.hasMovies = false; // true if there are results of type movies to be shown
         $scope.hasActors = false; // true if there are results of type actors to be shown
         $scope.hasTV = false; // true if there are results of type tv to be shown
+        $scope.hasDetails = false;
         $scope.totalResults = 0; // the inital value of the total results
         $scope.totalPages = 0; // the number of pages which was returned from the search
         $scope.movies = [];
